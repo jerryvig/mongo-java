@@ -1,0 +1,6 @@
+importPackage(com.mongodb);
+importPackage(java.lang);
+
+var m = new Mongo("localhost");
+var db = m.getDB("morningstar");
+
