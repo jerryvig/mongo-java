@@ -1,0 +1,9 @@
+import com.mongodb.*
+
+def m = new Mongo("localhost")
+def db = m.getDB("morningstar")
+
+def dividendsColl = db.getCollection("yahoo_dividends")
+
+println dividendsColl.findOne()
+
