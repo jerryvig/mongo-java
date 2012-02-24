@@ -54,8 +54,8 @@ for ( var i=0; i<cboeWeekliesList.size(); i++ ) {
 
   var sharpeRatio = 0.0;
   if ( sharpeCount > 0 ) {
-     var avgChange = sumChange/sharpeCount;
-     var stddevChange = Math.sqrt( sumChangeSquared/sharpeCount - avgChange*avgChange );
+     var avgChange = sumChange/(sharpeCount-1);
+     var stddevChange = Math.sqrt( sumChangeSquared/(sharpeCount-1) - avgChange*avgChange );
      sharpeRatio = avgChange/stddevChange;
      outDBObject.put("sharpe_ratio",sharpeRatio); 
   }
@@ -76,7 +76,7 @@ for ( var i=0; i<cboeWeekliesList.size(); i++ ) {
      revObj.put("period",row.get("period"));
      revObj.put("revenue",row.get("revenue"));
      revList.put(revCount,revObj);
-     if ( revCount > 1 ) {
+     if ( revCount > 0 ) {
 	var revGrowth = (row.get("revenue")-prevRev)/prevRev;
         sumRevGrowth += revGrowth;
         sumRevGrowthSquared += revGrowth*revGrowth;
@@ -88,16 +88,17 @@ for ( var i=0; i<cboeWeekliesList.size(); i++ ) {
 
   var sharpeRevGrowth = 0.0;
   if ( revCount > 0 ) {
-     var avgRevGrowth = sumRevGrowth/revCount;
-     var stddevRevGrowth = Math.sqrt( sumRevGrowthSquared - avgRevGrowth*avgRevGrowth );
+     var avgRevGrowth = sumRevGrowth/(revCount-1);
+     var stddevRevGrowth = Math.sqrt( sumRevGrowthSquared/(revCount-1) - avgRevGrowth*avgRevGrowth );
      var sharpeRevGrowth = avgRevGrowth/stddevRevGrowth;
      outDBObject.put("avg_rev_growth",avgRevGrowth);
      outDBObject.put("sharpe_rev_growth",sharpeRevGrowth);
   }
 
+  /*
   if ( sharpeRatio > 0.0 || sharpeRevGrowth > 0.0 ) {
     outDBObject.put("hypotenuse",Math.sqrt( 9.0*sharpeRatio*sharpeRatio + sharpeRevGrowth*sharpeRevGrowth ));
-  }
+    } */
 
   cboeTickerColl.insert( outDBObject ); 
 }
