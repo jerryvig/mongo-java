@@ -73,20 +73,17 @@ for ( var i=0; i<cboeWeekliesList.size(); i++ ) {
 
   while ( cur2.hasNext() ) {
      var row = cur2.next();
-     var revenue = row.get("revenue");
-     if ( revenue > 0 ) {
-      var revObj = new BasicDBObject();
-      revObj.put("period",row.get("period"));
-      revObj.put("revenue",row.get("revenue"));
-      revList.put(revCount,revObj);
-      if ( revCount > 0 ) {
+     var revObj = new BasicDBObject();
+     revObj.put("period",row.get("period"));
+     revObj.put("revenue",row.get("revenue"));
+     revList.put(revCount,revObj);
+     if ( revCount > 0 ) {
 	var revGrowth = (row.get("revenue")-prevRev)/prevRev;
         sumRevGrowth += revGrowth;
         sumRevGrowthSquared += revGrowth*revGrowth;
-      }
-      prevRev = row.get("revenue");
-      revCount++;   
      }
+     prevRev = row.get("revenue");
+     revCount++;   
   }
   outDBObject.put("revenue_data",revList);
 
@@ -98,11 +95,6 @@ for ( var i=0; i<cboeWeekliesList.size(); i++ ) {
      outDBObject.put("avg_rev_growth",avgRevGrowth);
      outDBObject.put("sharpe_rev_growth",sharpeRevGrowth);
   }
-
-  /*
-  if ( sharpeRatio > 0.0 || sharpeRevGrowth > 0.0 ) {
-    outDBObject.put("hypotenuse",Math.sqrt( 9.0*sharpeRatio*sharpeRatio + sharpeRevGrowth*sharpeRevGrowth ));
-    } */
 
   cboeTickerColl.insert( outDBObject ); 
 }
@@ -158,11 +150,14 @@ while ( iter.hasNext() ) {
     var ranksCollObj = new BasicDBObject();
 
    if ( sharpeRank != null ) {
+      print( ticker + "," + sharpeRevGRank + "," + sharpeRank );
       var normRank = Math.sqrt(sharpeRevGRank*sharpeRevGRank + sharpeRank*sharpeRank);
       ranksCollObj.put("norm_rank",normRank);      
-      ranksCollObj.put("ticker_symbol",ticker);
-      ranksCollObj.put("sharpe_revg_rank",sharpeRevGRank);
-      ranksCollObj.put("sharpe_rank",sharpeRank);
-      ranksColl.insert( ranksCollObj );
    }
+
+   ranksCollObj.put("ticker_symbol",ticker);
+   ranksCollObj.put("sharpe_revg_rank",sharpeRevGRank);
+   ranksCollObj.put("sharpe_rank",sharpeRank);
+
+   ranksColl.insert( ranksCollObj );
 }
